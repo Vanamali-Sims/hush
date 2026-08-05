@@ -1,0 +1,30 @@
+# Pulls the City of Melbourne past-hour pedestrian feed into Postgres.
+# Needs the repository secret DATABASE_URL (your Neon connection string).
+# Note: scheduled runs are free on public repos. GitHub may delay cron runs
+# by a few minutes under load — fine, the feed itself refreshes every 15 min.
+
+name: Sync pedestrian data
+
+on:
+  schedule:
+    - cron: '*/20 * * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install --quiet "httpx>=0.27" "psycopg[binary]>=3.2" "python-dotenv>=1.0"
+
+      - name: Sync feed into database
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python backend/scripts/sync_feed.py

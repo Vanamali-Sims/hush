@@ -1,0 +1,32 @@
+# Render Blueprint — deploys both services on the free tier.
+# In the Render dashboard: New -> Blueprint -> select this repo.
+# After creation, set the env vars marked sync:false in each service's settings.
+
+services:
+  - type: web
+    name: hush-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.4
+      - key: DATABASE_URL
+        sync: false # paste your Neon connection string
+      - key: ORS_API_KEY
+        sync: false # paste your OpenRouteService key
+      - key: CORS_ORIGINS
+        value: '*' # tighten to your frontend URL once deployed
+
+  - type: web
+    name: hush
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false # e.g. https://hush-api.onrender.com
