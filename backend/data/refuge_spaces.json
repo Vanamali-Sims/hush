@@ -1,0 +1,533 @@
+{
+ "fetched_at": "2026-08-05T12:35:40.130330+00:00",
+ "records": [
+  {
+   "name": "Australian Centre For The Moving Image (ACMI)",
+   "kind": "gallery or museum",
+   "lat": -37.8176107327202,
+   "lon": 144.969070431323
+  },
+  {
+   "name": "Australian Centre for Contemporary Art",
+   "kind": "gallery or museum",
+   "lat": -37.8266045432686,
+   "lon": 144.967252924593
+  },
+  {
+   "name": "Cooks' Cottage",
+   "kind": "gallery or museum",
+   "lat": -37.8144604899837,
+   "lon": 144.979471339826
+  },
+  {
+   "name": "Fire Services Museum Victoria",
+   "kind": "gallery or museum",
+   "lat": -37.8085761281612,
+   "lon": 144.975373745366
+  },
+  {
+   "name": "Fox Classic Car Collection",
+   "kind": "gallery or museum",
+   "lat": -37.8213744301481,
+   "lon": 144.948496661709
+  },
+  {
+   "name": "Immigration Museum",
+   "kind": "gallery or museum",
+   "lat": -37.8191798798062,
+   "lon": 144.960426777129
+  },
+  {
+   "name": "Koorie Heritage Trust Inc",
+   "kind": "gallery or museum",
+   "lat": -37.8133854259085,
+   "lon": 144.954027907736
+  },
+  {
+   "name": "Melbourne Museum",
+   "kind": "gallery or museum",
+   "lat": -37.8035518129299,
+   "lon": 144.971690718887
+  },
+  {
+   "name": "National Sports Museum",
+   "kind": "gallery or museum",
+   "lat": -37.8189544909462,
+   "lon": 144.984669809381
+  },
+  {
+   "name": "Old Melbourne Gaol Crime & Justice Experience",
+   "kind": "gallery or museum",
+   "lat": -37.8077644149636,
+   "lon": 144.965463853978
+  },
+  {
+   "name": "Polly Woodside",
+   "kind": "gallery or museum",
+   "lat": -37.8242574266145,
+   "lon": 144.953478052064
+  },
+  {
+   "name": "Royal Exhibition Building",
+   "kind": "gallery or museum",
+   "lat": -37.80460262432,
+   "lon": 144.971521914952
+  },
+  {
+   "name": "Sinclair's Cottage",
+   "kind": "gallery or museum",
+   "lat": -37.8145407488014,
+   "lon": 144.980554992725
+  },
+  {
+   "name": "The Ian Potter Centre: NGV Australia",
+   "kind": "gallery or museum",
+   "lat": -37.8174831423197,
+   "lon": 144.969899048343
+  },
+  {
+   "name": "The Ian Potter Museum Of Art",
+   "kind": "gallery or museum",
+   "lat": -37.7973939595503,
+   "lon": 144.964156669702
+  },
+  {
+   "name": "The Museum Of Australian Chinese History",
+   "kind": "gallery or museum",
+   "lat": -37.8107686127655,
+   "lon": 144.96923385414
+  },
+  {
+   "name": "Thoroughbred Racing Gallery",
+   "kind": "gallery or museum",
+   "lat": -37.8188662730911,
+   "lon": 144.9839700954
+  },
+  {
+   "name": "Victoria Police Museum",
+   "kind": "gallery or museum",
+   "lat": -37.8222182774409,
+   "lon": 144.954039975197
+  },
+  {
+   "name": "Victorian Arts Centre",
+   "kind": "gallery or museum",
+   "lat": -37.8219947335768,
+   "lon": 144.968837288153
+  },
+  {
+   "name": "The Melbourne Athenaeum Library",
+   "kind": "library",
+   "lat": -37.8148855756416,
+   "lon": 144.967291289941
+  },
+  {
+   "name": "Alexandra Gardens",
+   "kind": "park",
+   "lat": -37.8206051404251,
+   "lon": 144.971796067365
+  },
+  {
+   "name": "Argyle Square",
+   "kind": "park",
+   "lat": -37.8031480577285,
+   "lon": 144.965761295089
+  },
+  {
+   "name": "Batman Park",
+   "kind": "park",
+   "lat": -37.8218460949601,
+   "lon": 144.956665812218
+  },
+  {
+   "name": "Birrarung Marr",
+   "kind": "park",
+   "lat": -37.81806108403,
+   "lon": 144.97314667014
+  },
+  {
+   "name": "Carlton Gardens North",
+   "kind": "park",
+   "lat": -37.8017690847403,
+   "lon": 144.971997551189
+  },
+  {
+   "name": "Carlton Gardens South",
+   "kind": "park",
+   "lat": -37.8060684577258,
+   "lon": 144.971266479841
+  },
+  {
+   "name": "Darling Square",
+   "kind": "park",
+   "lat": -37.81299206932,
+   "lon": 144.989062559512
+  },
+  {
+   "name": "Docklands Park",
+   "kind": "park",
+   "lat": -37.8209956785618,
+   "lon": 144.946781702342
+  },
+  {
+   "name": "Enterprize Park",
+   "kind": "park",
+   "lat": -37.820210269629,
+   "lon": 144.959276859602
+  },
+  {
+   "name": "Fawkner Park",
+   "kind": "park",
+   "lat": -37.8413996708186,
+   "lon": 144.981625667877
+  },
+  {
+   "name": "Federation Square",
+   "kind": "park",
+   "lat": -37.8178516571684,
+   "lon": 144.968963600783
+  },
+  {
+   "name": "Fitzroy Gardens",
+   "kind": "park",
+   "lat": -37.8129616331579,
+   "lon": 144.980455714669
+  },
+  {
+   "name": "Flagstaff Gardens",
+   "kind": "park",
+   "lat": -37.8111222889277,
+   "lon": 144.954696055235
+  },
+  {
+   "name": "J.J Holland Park",
+   "kind": "park",
+   "lat": -37.7982358832177,
+   "lon": 144.923837074813
+  },
+  {
+   "name": "Kings Domain",
+   "kind": "park",
+   "lat": -37.8255239795833,
+   "lon": 144.974107925144
+  },
+  {
+   "name": "Lincoln Square",
+   "kind": "park",
+   "lat": -37.8027919689732,
+   "lon": 144.962760852233
+  },
+  {
+   "name": "Macarthur Square",
+   "kind": "park",
+   "lat": -37.7983318676737,
+   "lon": 144.971514146104
+  },
+  {
+   "name": "Murchinson Square",
+   "kind": "park",
+   "lat": -37.8002735025371,
+   "lon": 144.973059252203
+  },
+  {
+   "name": "New Quay",
+   "kind": "park",
+   "lat": -37.8152178789077,
+   "lon": 144.941617889032
+  },
+  {
+   "name": "Newmarket Reserve",
+   "kind": "park",
+   "lat": -37.7878473341234,
+   "lon": 144.922972125346
+  },
+  {
+   "name": "North Melbourne Recreation Reserve",
+   "kind": "park",
+   "lat": -37.7988345257153,
+   "lon": 144.941452061463
+  },
+  {
+   "name": "Parliament Reserve",
+   "kind": "park",
+   "lat": -37.809852620638,
+   "lon": 144.973462202839
+  },
+  {
+   "name": "Piazza Italia",
+   "kind": "park",
+   "lat": -37.8025164192523,
+   "lon": 144.965863092947
+  },
+  {
+   "name": "Point Park",
+   "kind": "park",
+   "lat": -37.8233522700646,
+   "lon": 144.942102276731
+  },
+  {
+   "name": "Powlett Reserve",
+   "kind": "park",
+   "lat": -37.8116929882498,
+   "lon": 144.987275671763
+  },
+  {
+   "name": "Princes Park",
+   "kind": "park",
+   "lat": -37.7870161727156,
+   "lon": 144.961115214367
+  },
+  {
+   "name": "Queen Victoria Gardens",
+   "kind": "park",
+   "lat": -37.8216381244891,
+   "lon": 144.971049530478
+  },
+  {
+   "name": "Richmond Football Club",
+   "kind": "park",
+   "lat": -37.8216740022008,
+   "lon": 144.988156318781
+  },
+  {
+   "name": "Riverslide Skate Park",
+   "kind": "park",
+   "lat": -37.8207887122448,
+   "lon": 144.972951789291
+  },
+  {
+   "name": "Royal Botanic Gardens",
+   "kind": "park",
+   "lat": -37.8306631583233,
+   "lon": 144.980850432751
+  },
+  {
+   "name": "Royal Park",
+   "kind": "park",
+   "lat": -37.7906174256581,
+   "lon": 144.953834240647
+  },
+  {
+   "name": "Sandridge Rail Bridge",
+   "kind": "park",
+   "lat": -37.8201763042794,
+   "lon": 144.96298113724
+  },
+  {
+   "name": "Shrine of Rembrance Reserve",
+   "kind": "park",
+   "lat": -37.8320733992876,
+   "lon": 144.973628364465
+  },
+  {
+   "name": "Treasury Gardens",
+   "kind": "park",
+   "lat": -37.8143993575938,
+   "lon": 144.975952335785
+  },
+  {
+   "name": "University Square",
+   "kind": "park",
+   "lat": -37.800410711209,
+   "lon": 144.960398319302
+  },
+  {
+   "name": "Westgate Park",
+   "kind": "park",
+   "lat": -37.8314918578874,
+   "lon": 144.908824792698
+  },
+  {
+   "name": "Yarra Park",
+   "kind": "park",
+   "lat": -37.820469374101,
+   "lon": 144.986671109615
+  },
+  {
+   "name": "All Nations Uniting Church",
+   "kind": "place of worship",
+   "lat": -37.7959155303946,
+   "lon": 144.968981110942
+  },
+  {
+   "name": "Christ Church Kensington",
+   "kind": "place of worship",
+   "lat": -37.7932109480553,
+   "lon": 144.92729572288
+  },
+  {
+   "name": "Church of Christ",
+   "kind": "place of worship",
+   "lat": -37.8104524079085,
+   "lon": 144.96388920294
+  },
+  {
+   "name": "Collins Street Baptist Church",
+   "kind": "place of worship",
+   "lat": -37.8147011904647,
+   "lon": 144.968072486031
+  },
+  {
+   "name": "East Melbourne Synagogue",
+   "kind": "place of worship",
+   "lat": -37.809113728917,
+   "lon": 144.97422190954
+  },
+  {
+   "name": "Greek Orthodox Church",
+   "kind": "place of worship",
+   "lat": -37.8088064667555,
+   "lon": 144.978259089269
+  },
+  {
+   "name": "Holy Rosary",
+   "kind": "place of worship",
+   "lat": -37.7948087414394,
+   "lon": 144.928362125005
+  },
+  {
+   "name": "Holy Trinity",
+   "kind": "place of worship",
+   "lat": -37.8140667110854,
+   "lon": 144.983197322289
+  },
+  {
+   "name": "Lutheran Trinity Church",
+   "kind": "place of worship",
+   "lat": -37.8109757054396,
+   "lon": 144.975729473552
+  },
+  {
+   "name": "Melbourne Unitarian Church",
+   "kind": "place of worship",
+   "lat": -37.8114487773394,
+   "lon": 144.984664890999
+  },
+  {
+   "name": "North Melbourne Uniting",
+   "kind": "place of worship",
+   "lat": -37.8035538471344,
+   "lon": 144.947671538375
+  },
+  {
+   "name": "Our Lady of Lebanon Church",
+   "kind": "place of worship",
+   "lat": -37.8025766539683,
+   "lon": 144.969334720932
+  },
+  {
+   "name": "Romanian Orthodox",
+   "kind": "place of worship",
+   "lat": -37.8052307297468,
+   "lon": 144.966986444597
+  },
+  {
+   "name": "Scots Church",
+   "kind": "place of worship",
+   "lat": -37.8145687802664,
+   "lon": 144.96855105335
+  },
+  {
+   "name": "South Yarra Presbyterian Church",
+   "kind": "place of worship",
+   "lat": -37.8407473645397,
+   "lon": 144.98562699348
+  },
+  {
+   "name": "St Alban Anglican Church",
+   "kind": "place of worship",
+   "lat": -37.7942169477929,
+   "lon": 144.94161451392
+  },
+  {
+   "name": "St Augustines Church",
+   "kind": "place of worship",
+   "lat": -37.8169741358546,
+   "lon": 144.954862000132
+  },
+  {
+   "name": "St Francis Church",
+   "kind": "place of worship",
+   "lat": -37.8118847831837,
+   "lon": 144.962422614541
+  },
+  {
+   "name": "St James Church",
+   "kind": "place of worship",
+   "lat": -37.8101281201969,
+   "lon": 144.952468571683
+  },
+  {
+   "name": "St Johns Lutheran Church",
+   "kind": "place of worship",
+   "lat": -37.8209399677168,
+   "lon": 144.967121099857
+  },
+  {
+   "name": "St Mary's Anglican Church",
+   "kind": "place of worship",
+   "lat": -37.8031663672997,
+   "lon": 144.953761537074
+  },
+  {
+   "name": "St Michael's Uniting Church",
+   "kind": "place of worship",
+   "lat": -37.8143851324913,
+   "lon": 144.969174036096
+  },
+  {
+   "name": "St Michaels",
+   "kind": "place of worship",
+   "lat": -37.7940512679297,
+   "lon": 144.945399480629
+  },
+  {
+   "name": "St Patricks Cathedral",
+   "kind": "place of worship",
+   "lat": -37.8101140950474,
+   "lon": 144.975901529712
+  },
+  {
+   "name": "St Pauls Cathedral",
+   "kind": "place of worship",
+   "lat": -37.8169549012399,
+   "lon": 144.967681647402
+  },
+  {
+   "name": "St Peter's Eastern Hill",
+   "kind": "place of worship",
+   "lat": -37.8097086714637,
+   "lon": 144.975259178609
+  },
+  {
+   "name": "St Thomas Aquinas Church",
+   "kind": "place of worship",
+   "lat": -37.8353076902578,
+   "lon": 144.976809080472
+  },
+  {
+   "name": "The Parish of Christ Church South Yarra",
+   "kind": "place of worship",
+   "lat": -37.8386270533576,
+   "lon": 144.986009385387
+  },
+  {
+   "name": "Ukranian Catholic Cathedral",
+   "kind": "place of worship",
+   "lat": -37.7963084580345,
+   "lon": 144.944313454028
+  },
+  {
+   "name": "Welsh Presbyterian Church",
+   "kind": "place of worship",
+   "lat": -37.8104478768313,
+   "lon": 144.959873260087
+  },
+  {
+   "name": "Wesley Church",
+   "kind": "place of worship",
+   "lat": -37.8101576446961,
+   "lon": 144.968168215633
+  }
+ ]
+}
