@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { getRefuges } from '../api';
+import { QuietIcon } from './icons';
 
 const DEFAULT_POINT = { lat: -37.8136, lon: 144.9646, label: 'central Melbourne' };
 
@@ -33,7 +34,7 @@ export function RefugePanel({ origin, onRefuges }) {
           const p = origin || DEFAULT_POINT;
           fetchFor(p.lat, p.lon, p.label || DEFAULT_POINT.label);
         },
-        { timeout: 8000 }
+        { timeout: 8000 },
       );
     } else {
       const p = origin || DEFAULT_POINT;
@@ -45,7 +46,10 @@ export function RefugePanel({ origin, onRefuges }) {
     <section className="card refuge-card" aria-label="Quiet space now">
       <div className="refuge-card__head">
         <div>
-          <h2>Quiet space now</h2>
+          <h2 className="heading-with-icon">
+            <QuietIcon size={20} />
+            Quiet space now
+          </h2>
           <p className="field-note">Nearest refuge, one tap.</p>
         </div>
         <button type="button" className="button button--secondary" onClick={locate}>
@@ -59,8 +63,8 @@ export function RefugePanel({ origin, onRefuges }) {
             <li key={r.name}>
               <strong>{r.name}</strong>
               <span>
-                {r.kind} · {r.distance_m} m · about {Math.max(1, Math.round(r.distance_m / 80))}{' '}
-                min walk
+                {r.kind} · {r.distance_m} m · about{' '}
+                {Math.max(1, Math.round(r.distance_m / 80))} min walk
               </span>
             </li>
           ))}

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { geocode } from '../api';
+import { FlagIcon, PinIcon } from './icons';
 
 /** Text input with place suggestions. Suggestions come from the backend
  * (ORS geocoding when configured, curated CBD places otherwise). */
@@ -40,10 +41,15 @@ export function PlaceField({ id, label, value, onSelect, onUseCurrentLocation, t
     setOpen(false);
   }
 
+  const LabelIcon = id === 'to' ? FlagIcon : PinIcon;
+
   return (
     <div className="place-field">
       <div className="place-field__head">
-        <label htmlFor={id}>{label}</label>
+        <label htmlFor={id}>
+          <LabelIcon size={17} />
+          {label}
+        </label>
         {tag ? <span className="tag">{tag}</span> : null}
       </div>
       <input

@@ -1,3 +1,5 @@
+import { ClockIcon } from './icons';
+
 /** Honest data-freshness line. Always visible once known. */
 export function StatusBar({ data }) {
   if (!data) return null;
@@ -17,8 +19,11 @@ export function StatusBar({ data }) {
 
   return (
     <p className={`status-bar${data.source === 'snapshot' ? ' status-bar--stale' : ''}`}>
-      {sourceText}
-      {ageText ? ` · ${ageText}` : ''}
+      <ClockIcon size={16} />
+      <span>
+        {sourceText}
+        {ageText ? ` · ${ageText}` : ''}
+      </span>
     </p>
   );
 }

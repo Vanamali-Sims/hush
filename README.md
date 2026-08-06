@@ -13,6 +13,26 @@ language, nothing hidden, nothing sudden.
 - **Routing:** OpenRouteService (free key)
 - **User data:** browser localStorage only — no accounts, no login
 
+## Accessibility & sensory design
+
+The UI is tuned for neurodivergent and sensory-sensitive users, grounded in the
+research in [context/ui_considerations.md](context/ui_considerations.md):
+
+- **Readable text:** 18 px Atkinson Hyperlegible baseline, 1.6 line height, subtle
+  letter spacing, left-aligned, with prose capped to a short line length so
+  nothing becomes a wall of text (dyslexia reading research).
+- **Calm palette:** warm off-white surfaces (never pure white), soft charcoal text
+  (never pure black), muted sage for LOW and amber for HIGH — never alarm-red.
+- **Meaning three ways:** every badge pairs colour + text + a literal icon
+  (leaf = LOW, caution = HIGH, dash = NO DATA), so no single channel is required.
+- **One clear choice:** the calmest route is marked "Calmest of these" and given
+  more visual weight; the rest are gently muted. All routes are always shown.
+- **Predictable & steady:** "Step 1 / Step 2" section labels, a reserved-space
+  loading skeleton (no layout shift), an `aria-live` status while searching, no
+  animation anywhere, full keyboard navigation, and honest data-age labels.
+
+These are baked-in defaults — no settings panel to configure.
+
 ## Quick start (local)
 
 You need Node 20+, Python 3.12+, and two free API resources:

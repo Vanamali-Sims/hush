@@ -1,21 +1,41 @@
 import { useState } from 'react';
 import { arrivalTime, routeBadge, worstIsFlagged } from '../badges';
+import { CautionIcon, DashIcon, LeafIcon } from './icons';
 
 function Badge({ kind }) {
-  const cls = { LOW: 'badge badge--low', HIGH: 'badge badge--high' }[kind] || 'badge badge--nodata';
-  return <span className={cls}>{kind}</span>;
+  const cls =
+    { LOW: 'badge badge--low', HIGH: 'badge badge--high' }[kind] || 'badge badge--nodata';
+  const Icon = { LOW: LeafIcon, HIGH: CautionIcon }[kind] || DashIcon;
+  return (
+    <span className={cls}>
+      <Icon size={15} />
+      {kind}
+    </span>
+  );
 }
 
-export function RouteCard({ route, threshold, selected, onSelect }) {
+export function RouteCard({ route, threshold, selected, calmest, onSelect }) {
   const [showWorst, setShowWorst] = useState(false);
   const badge = routeBadge(route, threshold);
   const flagged = worstIsFlagged(route, threshold);
 
+  const className = [
+    'route-card',
+    calmest ? 'route-card--calmest' : '',
+    !calmest ? 'route-card--muted' : '',
+    selected ? 'route-card--selected' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <article
-      className={`route-card${selected ? ' route-card--selected' : ''}`}
-      aria-current={selected ? 'true' : undefined}
-    >
+    <article className={className} aria-current={selected ? 'true' : undefined}>
+      {calmest ? (
+        <p className="route-card__calmest-tag">
+          <LeafIcon size={16} />
+          Calmest of these
+        </p>
+      ) : null}
       <button type="button" className="route-card__main" onClick={onSelect}>
         <div className="route-card__title-row">
           <h3>{route.via ? `Via ${route.via}` : 'Walking route'}</h3>
@@ -39,8 +59,8 @@ export function RouteCard({ route, threshold, selected, onSelect }) {
         )}
         {route.segments_no_data > 0 && route.avg_density !== null ? (
           <p className="nodata-chip">
-            {route.segments_no_data} of {route.segments_total} segments — no sensor
-            within 50 m
+            {route.segments_no_data} of {route.segments_total} segments — no sensor within
+            50 m
           </p>
         ) : null}
       </button>

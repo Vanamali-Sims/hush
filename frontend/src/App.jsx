@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getStatus, planRoutes } from './api';
+import { CautionIcon } from './components/icons';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { PlaceField } from './components/PlaceField';
 import { ThresholdControl } from './components/ThresholdControl';
@@ -23,9 +24,7 @@ export default function App() {
 
   useEffect(() => {
     getStatus()
-      .then((s) =>
-        setStatus({ source: s.data_source, age_min: s.data_age_min })
-      )
+      .then((s) => setStatus({ source: s.data_source, age_min: s.data_age_min }))
       .catch(() => {});
   }, []);
 
@@ -43,9 +42,9 @@ export default function App() {
         }),
       () =>
         setError(
-          'We could not read your location. Nothing is wrong — just type a starting place instead.'
+          'We could not read your location. Nothing is wrong — just type a starting place instead.',
         ),
-      { timeout: 8000 }
+      { timeout: 8000 },
     );
   }
 
@@ -61,7 +60,9 @@ export default function App() {
       const res = await planRoutes(from, to);
       setResult(res);
       setSelectedId(res.routes[0]?.id ?? null);
-      setStatus(res.data ? { source: res.data.source, age_min: res.data.age_min } : status);
+      setStatus(
+        res.data ? { source: res.data.source, age_min: res.data.age_min } : status,
+      );
     } catch (err) {
       setError(err.message);
     } finally {
@@ -72,7 +73,7 @@ export default function App() {
   function saveFavourite(place) {
     if (!place) return;
     setFavourites((prev) =>
-      prev.some((p) => p.label === place.label) ? prev : [...prev, place].slice(-8)
+      prev.some((p) => p.label === place.label) ? prev : [...prev, place].slice(-8),
     );
   }
 
@@ -81,6 +82,17 @@ export default function App() {
   }
 
   const hasRoutes = result && result.routes.length > 0;
+
+  // Presentational only: mark the calmest measured route so one option carries
+  // more visual weight. Nothing is hidden or reordered.
+  const calmestId = useMemo(() => {
+    if (!hasRoutes) return null;
+    const measured = result.routes.filter(
+      (r) => r.avg_density !== null && r.avg_density !== undefined,
+    );
+    if (measured.length < 2) return null;
+    return measured.reduce((best, r) => (r.avg_density < best.avg_density ? r : best)).id;
+  }, [result, hasRoutes]);
 
   return (
     <div className="app">
@@ -97,7 +109,8 @@ export default function App() {
       <main className="layout">
         <div className="layout__panel">
           <section className="card" aria-label="Plan a trip">
-            <h1>Plan a trip</h1>
+            <span className="step-label">Step 1 of 2</span>
+            <h1>Plan your trip</h1>
             <form onSubmit={findRoutes}>
               <PlaceField
                 id="from"
@@ -155,24 +168,43 @@ export default function App() {
 
           {error ? (
             <div className="notice" role="alert">
+              <CautionIcon />
               <p>{error}</p>
             </div>
           ) : null}
 
-          {hasRoutes ? (
+          {loading ? (
+            <section className="card" aria-label="Finding routes">
+              <span className="step-label">Step 2 of 2</span>
+              <h2>Your routes</h2>
+              <p className="status-live" role="status" aria-live="polite">
+                Finding calmer routes…
+              </p>
+              {[0, 1].map((n) => (
+                <div key={n} className="skeleton-card" aria-hidden="true">
+                  <div className="skeleton-line skeleton-line--tall" />
+                  <div className="skeleton-line skeleton-line--medium" />
+                  <div className="skeleton-line skeleton-line--short" />
+                </div>
+              ))}
+            </section>
+          ) : null}
+
+          {hasRoutes && !loading ? (
             <section className="card" aria-label="Route results">
               <div className="results-head">
+                <span className="step-label">Step 2 of 2</span>
                 <h2>
-                  {result.routes.length}{' '}
-                  {result.routes.length === 1 ? 'route' : 'routes'}
+                  Your routes — {result.routes.length}{' '}
+                  {result.routes.length === 1 ? 'option' : 'options'}
                 </h2>
                 <p className="field-note">
                   Sorted by arrival. All routes are shown — none are hidden from you.
                 </p>
                 {result.route_source === 'fallback' ? (
                   <p className="field-note">
-                    The live route service is down, so these are recently saved routes
-                    for this trip.
+                    The live route service is down, so these are recently saved routes for
+                    this trip.
                   </p>
                 ) : null}
               </div>
@@ -182,14 +214,16 @@ export default function App() {
                   route={r}
                   threshold={threshold}
                   selected={selectedId === r.id}
+                  calmest={r.id === calmestId}
                   onSelect={() => setSelectedId(r.id)}
                 />
               ))}
             </section>
           ) : null}
 
-          {result && result.routes.length === 0 ? (
+          {result && result.routes.length === 0 && !loading ? (
             <div className="notice">
+              <CautionIcon />
               <p>
                 No walking route was found between those places. Try places a little
                 further apart, inside the CBD.

@@ -23,7 +23,7 @@ export function MapView({ routes, threshold, selectedId, onSelect, from, to, ref
         properties: { id: r.id, color: COLORS[routeBadge(r, threshold)] },
       })),
     }),
-    [routes, threshold]
+    [routes, threshold],
   );
 
   const selected = (routes || []).find((r) => r.id === selectedId);
@@ -37,7 +37,7 @@ export function MapView({ routes, threshold, selectedId, onSelect, from, to, ref
         properties: { reading: s.reading },
       })),
     }),
-    [selected]
+    [selected],
   );
 
   // Fit the view to the routes without animation (no sudden motion).
@@ -61,7 +61,7 @@ export function MapView({ routes, threshold, selectedId, onSelect, from, to, ref
         [minLon, minLat],
         [maxLon, maxLat],
       ],
-      { padding: 56, duration: 0 }
+      { padding: 56, duration: 0 },
     );
   }, [routes]);
 
@@ -90,12 +90,7 @@ export function MapView({ routes, threshold, selectedId, onSelect, from, to, ref
               layout={{ 'line-cap': 'round', 'line-join': 'round' }}
               paint={{
                 'line-color': ['get', 'color'],
-                'line-width': [
-                  'case',
-                  ['==', ['get', 'id'], selectedId ?? -1],
-                  6,
-                  3,
-                ],
+                'line-width': ['case', ['==', ['get', 'id'], selectedId ?? -1], 6, 3],
                 'line-opacity': [
                   'case',
                   ['==', ['get', 'id'], selectedId ?? -1],
