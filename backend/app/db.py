@@ -26,7 +26,7 @@ def _connect() -> psycopg.Connection | None:
 
 
 def fetch_recent_readings() -> list[dict] | None:
-    """Latest readings from sensor_readings, or None if DB is unusable/stale."""
+    """Latest readings from pedestrian_minute_count, or None if DB is unusable/stale."""
     conn = _connect()
     if conn is None:
         return None
@@ -35,10 +35,15 @@ def fetch_recent_readings() -> list[dict] | None:
             cutoff = datetime.now(timezone.utc) - timedelta(
                 minutes=config.DB_READINGS_MAX_AGE_MIN
             )
+            # Alias back to total_of_directions (the external API's own field
+            # name, matched by scoring.py/tests/the snapshot fixture) so the
+            # pedestrian_minute_count/total_of_direction rename stays
+            # contained to this file, schema.sql and sync_feed.py.
             rows = conn.execute(
                 """
-                SELECT location_id, sensing_datetime, total_of_directions
-                FROM sensor_readings
+                SELECT location_id, sensing_datetime,
+                       total_of_direction AS total_of_directions
+                FROM pedestrian_minute_count
                 WHERE sensing_datetime >= %s
                 """,
                 (cutoff,),

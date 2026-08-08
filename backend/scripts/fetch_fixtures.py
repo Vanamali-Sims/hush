@@ -25,6 +25,7 @@ PAST_HOUR_DATASET = "pedestrian-counting-system-past-hour-counts-per-minute"
 LANDMARKS_DATASET = (
     "landmarks-and-places-of-interest-including-schools-theatres-health-services-spor"
 )
+DEVELOPMENT_ACTIVITY_DATASET = "development-activity-monitor"
 
 # Landmark sub-themes suitable as low-stimulation refuge spaces.
 REFUGE_SUBTHEMES = {
@@ -81,6 +82,11 @@ def main() -> int:
 
     try:
         landmarks = export_dataset(LANDMARKS_DATASET)
+        # Raw records, theme/sub_theme intact — seeds theme/landmark_category/
+        # landmark. refuge_spaces (below) is a separate, unchanged, filtered
+        # view built from the same fetch; this is not a replacement for it.
+        save("landmarks", landmarks)
+
         refuges = []
         for lm in landmarks:
             kind = REFUGE_SUBTHEMES.get(lm.get("sub_theme"))
@@ -99,6 +105,13 @@ def main() -> int:
     except Exception as exc:  # noqa: BLE001
         failures += 1
         print(f"FAILED {LANDMARKS_DATASET}: {exc}", file=sys.stderr)
+
+    try:
+        activities = export_dataset(DEVELOPMENT_ACTIVITY_DATASET)
+        save("planned_activity", activities)
+    except Exception as exc:  # noqa: BLE001
+        failures += 1
+        print(f"FAILED {DEVELOPMENT_ACTIVITY_DATASET}: {exc}", file=sys.stderr)
 
     return 1 if failures else 0
 

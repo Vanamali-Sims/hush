@@ -47,30 +47,30 @@ def main() -> int:
     with psycopg.connect(config.DATABASE_URL) as conn:
         conn.execute(SCHEMA)
         with conn.cursor() as cur:
+            # total_of_direction is GENERATED ALWAYS AS ... STORED: it must
+            # never appear in an insert column list or an ON CONFLICT SET —
+            # Postgres rejects any write that references a generated column.
             cur.executemany(
                 """
-                INSERT INTO sensor_readings
-                    (location_id, sensing_datetime, direction_1, direction_2,
-                     total_of_directions)
-                VALUES (%s, %s, %s, %s, %s)
+                INSERT INTO pedestrian_minute_count
+                    (location_id, sensing_datetime, direction_1_count, direction_2_count)
+                VALUES (%s, %s, %s, %s)
                 ON CONFLICT (location_id, sensing_datetime) DO UPDATE SET
-                    direction_1 = EXCLUDED.direction_1,
-                    direction_2 = EXCLUDED.direction_2,
-                    total_of_directions = EXCLUDED.total_of_directions
+                    direction_1_count = EXCLUDED.direction_1_count,
+                    direction_2_count = EXCLUDED.direction_2_count
                 """,
                 [
                     (
-                        r["location_id"],
+                        str(r["location_id"]),
                         r["sensing_datetime"],
                         r.get("direction_1"),
                         r.get("direction_2"),
-                        r.get("total_of_directions"),
                     )
                     for r in rows
                 ],
             )
             cur.execute(
-                "DELETE FROM sensor_readings WHERE sensing_datetime < now() - interval '24 hours'"
+                "DELETE FROM pedestrian_minute_count WHERE sensing_datetime < now() - interval '24 hours'"
             )
             pruned = cur.rowcount
 
