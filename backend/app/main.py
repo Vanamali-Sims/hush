@@ -4,7 +4,7 @@ Endpoints:
   GET  /health            liveness (used by the keep-alive ping)
   GET  /api/status        data freshness / configuration overview
   GET  /api/places        curated CBD places for search suggestions
-  GET  /api/geocode       place search (ORS Pelias, curated fallback)
+  GET  /api/geocode       place search (database first, ORS Pelias, curated fallback)
   POST /api/routes        walking routes with sensory-load scoring
   GET  /api/refuges       nearest quiet spaces
 """
@@ -18,7 +18,7 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-from . import config, data_source, ors, places
+from . import config, data_source, db, ors, places
 from .geo import haversine_m
 from .scoring import score_route
 
@@ -81,6 +81,18 @@ def list_places():
 
 @app.get("/api/geocode")
 def geocode(text: str = Query(min_length=2, max_length=100)):
+    db_hits = db.search_landmarks(text)
+    if db_hits:
+        return {
+            "results": [
+                {
+                    "label": r["feature_name"],
+                    "lat": float(r["latitude"]),
+                    "lon": float(r["longitude"]),
+                }
+                for r in db_hits
+            ]
+        }
     return {"results": ors.geocode(text)}
 
 

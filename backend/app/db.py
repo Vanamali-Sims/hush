@@ -92,3 +92,29 @@ def fetch_refuges() -> list[dict] | None:
         return None
     finally:
         conn.close()
+
+
+def search_landmarks(text: str, limit: int = 5) -> list[dict] | None:
+    """Case-insensitive substring match over landmark.feature_name, or None
+    if the DB is unusable/has no match (caller falls back to live geocoding)."""
+    conn = _connect()
+    if conn is None:
+        return None
+    try:
+        with conn:
+            rows = conn.execute(
+                """
+                SELECT feature_name, latitude, longitude
+                FROM landmark
+                WHERE feature_name ILIKE %s
+                ORDER BY feature_name
+                LIMIT %s
+                """,
+                (f"%{text}%", limit),
+            ).fetchall()
+        return rows or None
+    except Exception as exc:  # noqa: BLE001
+        log.warning("landmark search failed: %s", exc)
+        return None
+    finally:
+        conn.close()
