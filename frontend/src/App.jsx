@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { getStatus, planRoutes } from './api';
 import { CautionIcon } from './components/icons';
 import { useLocalStorage } from './hooks/useLocalStorage';
+import { useLiveLocation } from './hooks/useLiveLocation';
 import { PlaceField } from './components/PlaceField';
 import { ThresholdControl } from './components/ThresholdControl';
 import { RouteCard } from './components/RouteCard';
@@ -21,6 +22,7 @@ export default function App() {
   const [error, setError] = useState(null);
   const [status, setStatus] = useState(null);
   const [refuges, setRefuges] = useState(null);
+  const liveLocation = useLiveLocation();
 
   useEffect(() => {
     getStatus()
@@ -48,16 +50,15 @@ export default function App() {
     );
   }
 
-  async function findRoutes(e) {
-    e.preventDefault();
+  async function planTrip(fromPlace, toPlace) {
     setError(null);
-    if (!from || !to) {
+    if (!fromPlace || !toPlace) {
       setError('Choose both a starting place and a destination from the suggestions.');
       return;
     }
     setLoading(true);
     try {
-      const res = await planRoutes(from, to);
+      const res = await planRoutes(fromPlace, toPlace);
       setResult(res);
       setSelectedId(res.routes[0]?.id ?? null);
       setStatus(
@@ -67,6 +68,33 @@ export default function App() {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  }
+
+  function findRoutes(e) {
+    e.preventDefault();
+    planTrip(from, to);
+  }
+
+  // "Take me there" from the refuge list: reuses whichever point the refuge
+  // search was made from as the route's start, so the user isn't asked to
+  // fill in the trip planner again for a place they already found.
+  function planRouteTo(originPlace, destPlace) {
+    const start = originPlace || from;
+    if (!start) {
+      setError('We need a starting point first — use "Use my current location" above.');
+      return;
+    }
+    setFrom(start);
+    setTo(destPlace);
+    planTrip(start, destPlace);
+  }
+
+  function toggleLiveLocation() {
+    if (liveLocation.tracking) {
+      liveLocation.stop();
+    } else {
+      liveLocation.start();
     }
   }
 
@@ -231,7 +259,7 @@ export default function App() {
             </div>
           ) : null}
 
-          <RefugePanel origin={from} onRefuges={setRefuges} />
+          <RefugePanel origin={from} onRefuges={setRefuges} onPlanRoute={planRouteTo} />
         </div>
 
         <div className="layout__map">
@@ -243,6 +271,9 @@ export default function App() {
             from={from}
             to={to}
             refuges={refuges}
+            liveLocation={liveLocation.position}
+            liveLocationTracking={liveLocation.tracking}
+            onToggleLiveLocation={toggleLiveLocation}
           />
           {hasRoutes ? <Legend threshold={threshold} /> : null}
         </div>

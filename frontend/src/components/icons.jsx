@@ -93,6 +93,19 @@ export function QuietIcon(props) {
   );
 }
 
+/** Live location toggle — a crosshair. */
+export function LocateIcon(props) {
+  return (
+    <Svg {...props}>
+      <circle cx="12" cy="12" r="3" />
+      <path d="M12 3v3" />
+      <path d="M12 18v3" />
+      <path d="M3 12h3" />
+      <path d="M18 12h3" />
+    </Svg>
+  );
+}
+
 /** Threshold — sliders. */
 export function SlidersIcon(props) {
   return (

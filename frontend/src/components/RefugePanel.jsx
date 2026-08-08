@@ -5,10 +5,13 @@ import { QuietIcon } from './icons';
 const DEFAULT_POINT = { lat: -37.8136, lon: 144.9646, label: 'central Melbourne' };
 
 /** "Quiet space now" — nearest low-stimulation refuges, one tap. */
-export function RefugePanel({ origin, onRefuges }) {
+export function RefugePanel({ origin, onRefuges, onPlanRoute }) {
   const [refuges, setRefuges] = useState(null);
   const [note, setNote] = useState(null);
   const [loading, setLoading] = useState(false);
+  // The point the last search actually used — "Take me there" routes from
+  // here, so the user isn't asked to fill in the trip planner again.
+  const [searchOrigin, setSearchOrigin] = useState(null);
 
   async function locate() {
     setLoading(true);
@@ -18,6 +21,7 @@ export function RefugePanel({ origin, onRefuges }) {
       try {
         const { refuges: found } = await getRefuges(lat, lon);
         setRefuges(found);
+        setSearchOrigin({ lat, lon, label: label || 'Current location' });
         onRefuges?.(found);
         if (label) setNote(`Showing quiet spaces near ${label}.`);
       } catch (err) {
@@ -66,6 +70,15 @@ export function RefugePanel({ origin, onRefuges }) {
                 {r.kind} · {r.distance_m} m · about{' '}
                 {Math.max(1, Math.round(r.distance_m / 80))} min walk
               </span>
+              <button
+                type="button"
+                className="link-button"
+                onClick={() =>
+                  onPlanRoute?.(searchOrigin, { label: r.name, lat: r.lat, lon: r.lon })
+                }
+              >
+                Take me there
+              </button>
             </li>
           ))}
         </ul>

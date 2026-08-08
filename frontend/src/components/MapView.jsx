@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { Layer, Map, Marker, Source } from '@vis.gl/react-maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { routeBadge, worstIsFlagged } from '../badges';
+import { LocateIcon } from './icons';
 
 const MAP_STYLE =
   import.meta.env.VITE_MAP_STYLE || 'https://tiles.openfreemap.org/styles/positron';
@@ -11,7 +12,18 @@ const COLORS = { LOW: '#5F8268', HIGH: '#B0793F', 'NO DATA': '#8F8B82' };
 
 const MELBOURNE_CENTER = { longitude: 144.9646, latitude: -37.8136, zoom: 14 };
 
-export function MapView({ routes, threshold, selectedId, onSelect, from, to, refuges }) {
+export function MapView({
+  routes,
+  threshold,
+  selectedId,
+  onSelect,
+  from,
+  to,
+  refuges,
+  liveLocation,
+  liveLocationTracking,
+  onToggleLiveLocation,
+}) {
   const mapRef = useRef(null);
 
   const routesGeoJson = useMemo(
@@ -67,6 +79,15 @@ export function MapView({ routes, threshold, selectedId, onSelect, from, to, ref
 
   return (
     <div className="map-shell">
+      <button
+        type="button"
+        className={`locate-btn${liveLocationTracking ? ' locate-btn--active' : ''}`}
+        onClick={onToggleLiveLocation}
+        aria-pressed={liveLocationTracking}
+        title={liveLocationTracking ? 'Stop showing my location' : 'Show my location on the map'}
+      >
+        <LocateIcon size={19} />
+      </button>
       <Map
         ref={mapRef}
         initialViewState={MELBOURNE_CENTER}
@@ -130,6 +151,15 @@ export function MapView({ routes, threshold, selectedId, onSelect, from, to, ref
             <div className="map-pin">
               <span className="map-pin__dot map-pin__dot--dest" />
               <span className="map-pin__label">{to.label}</span>
+            </div>
+          </Marker>
+        ) : null}
+
+        {liveLocation ? (
+          <Marker longitude={liveLocation.lon} latitude={liveLocation.lat} anchor="center">
+            <div className="you-are-here" aria-label="Your current location">
+              <span className="you-are-here__pulse" />
+              <span className="you-are-here__dot" />
             </div>
           </Marker>
         ) : null}
