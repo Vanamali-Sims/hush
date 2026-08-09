@@ -1,8 +1,20 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getStatus, planRoutes } from './api';
+import { getRefuges, getStatus, planRoutes } from './api';
 import { CautionIcon } from './components/icons';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { useLiveLocation } from './hooks/useLiveLocation';
+import { haversineM } from './geo';
+
+// How close the device's live position must be to a route's start before
+// "Start" begins turn-by-turn-style following. Generous enough to absorb
+// ordinary GPS drift in a dense CBD, tight enough to catch "not there yet".
+const JOURNEY_START_RADIUS_M = 150;
+
+const DEFAULT_REFUGE_POINT = { lat: -37.8136, lon: 144.9646, label: 'central Melbourne' };
+
+// Backend caps this at 10 (main.py). Show more than just the nearest 3 so
+// the map has real options to explore, not just a token handful of pins.
+const REFUGE_RESULT_LIMIT = 10;
 import { PlaceField } from './components/PlaceField';
 import { ThresholdControl } from './components/ThresholdControl';
 import { RouteCard } from './components/RouteCard';
@@ -10,8 +22,12 @@ import { MapView } from './components/MapView';
 import { Legend } from './components/Legend';
 import { StatusBar } from './components/StatusBar';
 import { RefugePanel } from './components/RefugePanel';
+import { Home } from './components/Home';
 
 export default function App() {
+  // Landing screen first, always — 'home' | 'plan' | 'refuge'. Every screen
+  // leads back here rather than stacking more onto one long page.
+  const [screen, setScreen] = useState('home');
   const [threshold, setThreshold] = useLocalStorage('hush-threshold', 100);
   const [favourites, setFavourites] = useLocalStorage('hush-favourites', []);
   const [from, setFrom] = useState(null);
@@ -21,14 +37,60 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [status, setStatus] = useState(null);
-  const [refuges, setRefuges] = useState(null);
   const liveLocation = useLiveLocation();
+  const [journeyRouteId, setJourneyRouteId] = useState(null);
+  const [pendingJourneyRoute, setPendingJourneyRoute] = useState(null);
+  const [journeyNotice, setJourneyNotice] = useState(null);
+  const [refuges, setRefuges] = useState(null);
+  const [refugeOrigin, setRefugeOrigin] = useState(null);
+  const [refugeLoading, setRefugeLoading] = useState(false);
+  const [refugeNote, setRefugeNote] = useState(null);
 
   useEffect(() => {
     getStatus()
       .then((s) => setStatus({ source: s.data_source, age_min: s.data_age_min }))
       .catch(() => {});
   }, []);
+
+  // Shown automatically on arrival at the refuge screen — no click needed.
+  // Lives here, not inside RefugePanel, because the map on that screen needs
+  // the same refuges + origin the list does.
+  function findNearbyRefuges() {
+    setRefugeLoading(true);
+    setRefugeNote(null);
+
+    const fetchFor = async (lat, lon, label) => {
+      try {
+        const { refuges: found } = await getRefuges(lat, lon, REFUGE_RESULT_LIMIT);
+        setRefuges(found);
+        setRefugeOrigin({ lat, lon, label: label || 'Current location' });
+        if (label) setRefugeNote(`Showing quiet spaces near ${label}.`);
+      } catch (err) {
+        setRefugeNote(err.message);
+      } finally {
+        setRefugeLoading(false);
+      }
+    };
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => fetchFor(pos.coords.latitude, pos.coords.longitude, null),
+        () => {
+          const p = from || DEFAULT_REFUGE_POINT;
+          fetchFor(p.lat, p.lon, p.label || DEFAULT_REFUGE_POINT.label);
+        },
+        { timeout: 8000 },
+      );
+    } else {
+      const p = from || DEFAULT_REFUGE_POINT;
+      fetchFor(p.lat, p.lon, p.label || DEFAULT_REFUGE_POINT.label);
+    }
+  }
+
+  useEffect(() => {
+    if (screen === 'refuge') findNearbyRefuges();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen]);
 
   function useCurrentLocation() {
     if (!navigator.geolocation) {
@@ -57,6 +119,7 @@ export default function App() {
       return;
     }
     setLoading(true);
+    stopJourney();
     try {
       const res = await planRoutes(fromPlace, toPlace);
       setResult(res);
@@ -87,6 +150,7 @@ export default function App() {
     }
     setFrom(start);
     setTo(destPlace);
+    setScreen('plan');
     planTrip(start, destPlace);
   }
 
@@ -97,6 +161,50 @@ export default function App() {
       liveLocation.start();
     }
   }
+
+  // "Start": begin following the device's live position, but only once we
+  // can confirm the device is actually near this route's starting point —
+  // otherwise "following" would just snap the map to wherever the device
+  // really is, nowhere near the planned trip.
+  function startJourney(route) {
+    setJourneyNotice(null);
+    setPendingJourneyRoute(route);
+    if (!liveLocation.tracking) liveLocation.start();
+  }
+
+  function stopJourney() {
+    setJourneyRouteId(null);
+    setPendingJourneyRoute(null);
+    setJourneyNotice(null);
+  }
+
+  useEffect(() => {
+    if (!pendingJourneyRoute) return;
+    if (liveLocation.error) {
+      setJourneyNotice(liveLocation.error);
+      setPendingJourneyRoute(null);
+      return;
+    }
+    if (!liveLocation.position) return;
+
+    const [startLon, startLat] = pendingJourneyRoute.geometry.coordinates[0];
+    const distance = haversineM(
+      liveLocation.position.lat,
+      liveLocation.position.lon,
+      startLat,
+      startLon,
+    );
+    if (distance <= JOURNEY_START_RADIUS_M) {
+      setJourneyRouteId(pendingJourneyRoute.id);
+      setJourneyNotice(null);
+    } else {
+      setJourneyRouteId(null);
+      setJourneyNotice(
+        `You're about ${Math.round(distance)} m from the start of this route — get there, then tap Start again.`,
+      );
+    }
+    setPendingJourneyRoute(null);
+  }, [liveLocation.position, liveLocation.error, pendingJourneyRoute]);
 
   function saveFavourite(place) {
     if (!place) return;
@@ -129,11 +237,48 @@ export default function App() {
           <span className="logo">hush</span>
           <span className="logo-sub">Sensory-aware wayfinding · Melbourne CBD</span>
         </div>
-        <ThresholdControl threshold={threshold} onChange={setThreshold} />
+        {screen === 'plan' ? (
+          <ThresholdControl threshold={threshold} onChange={setThreshold} />
+        ) : null}
       </header>
 
-      <StatusBar data={status} />
+      {screen === 'plan' ? <StatusBar data={status} /> : null}
 
+      {screen !== 'home' ? (
+        <div className="back-nav">
+          <button type="button" className="link-button" onClick={() => setScreen('home')}>
+            ← Home
+          </button>
+        </div>
+      ) : null}
+
+      {screen === 'home' ? <Home onNavigate={setScreen} /> : null}
+
+      {screen === 'refuge' ? (
+        <main className="layout">
+          <div className="layout__panel">
+            <RefugePanel
+              refuges={refuges}
+              loading={refugeLoading}
+              note={refugeNote}
+              onPlanRoute={(dest) => planRouteTo(refugeOrigin, dest)}
+              onRefresh={findNearbyRefuges}
+            />
+          </div>
+          <div className="layout__map">
+            <MapView
+              from={refugeOrigin}
+              refuges={refuges}
+              onPlanRouteToRefuge={(dest) => planRouteTo(refugeOrigin, dest)}
+              liveLocation={liveLocation.position}
+              liveLocationTracking={liveLocation.tracking}
+              onToggleLiveLocation={toggleLiveLocation}
+            />
+          </div>
+        </main>
+      ) : null}
+
+      {screen === 'plan' ? (
       <main className="layout">
         <div className="layout__panel">
           <section className="card" aria-label="Plan a trip">
@@ -244,6 +389,13 @@ export default function App() {
                   selected={selectedId === r.id}
                   calmest={r.id === calmestId}
                   onSelect={() => setSelectedId(r.id)}
+                  journeyAvailable={from?.label === 'Current location'}
+                  journeying={journeyRouteId === r.id}
+                  onStartJourney={() => startJourney(r)}
+                  onStopJourney={stopJourney}
+                  journeyNotice={
+                    selectedId === r.id && journeyRouteId !== r.id ? journeyNotice : null
+                  }
                 />
               ))}
             </section>
@@ -259,7 +411,6 @@ export default function App() {
             </div>
           ) : null}
 
-          <RefugePanel origin={from} onRefuges={setRefuges} onPlanRoute={planRouteTo} />
         </div>
 
         <div className="layout__map">
@@ -270,15 +421,17 @@ export default function App() {
             onSelect={setSelectedId}
             from={from}
             to={to}
-            refuges={refuges}
             liveLocation={liveLocation.position}
             liveLocationTracking={liveLocation.tracking}
             onToggleLiveLocation={toggleLiveLocation}
+            journeyActive={journeyRouteId !== null && journeyRouteId === selectedId}
           />
           {hasRoutes ? <Legend threshold={threshold} /> : null}
         </div>
       </main>
+      ) : null}
 
+      {screen === 'plan' ? (
       <footer className="app-footer">
         <p>
           Routes from OpenRouteService (up to 3 alternatives). Sensory scores from the
@@ -286,6 +439,7 @@ export default function App() {
           network — places without sensors are marked “no data”, never assumed calm.
         </p>
       </footer>
+      ) : null}
     </div>
   );
 }

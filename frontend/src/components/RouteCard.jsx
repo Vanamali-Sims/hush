@@ -14,7 +14,18 @@ function Badge({ kind }) {
   );
 }
 
-export function RouteCard({ route, threshold, selected, calmest, onSelect }) {
+export function RouteCard({
+  route,
+  threshold,
+  selected,
+  calmest,
+  onSelect,
+  journeyAvailable,
+  journeying,
+  onStartJourney,
+  onStopJourney,
+  journeyNotice,
+}) {
   const [showWorst, setShowWorst] = useState(false);
   const badge = routeBadge(route, threshold);
   const flagged = worstIsFlagged(route, threshold);
@@ -92,6 +103,29 @@ export function RouteCard({ route, threshold, selected, calmest, onSelect }) {
               </p>
             </div>
           ) : null}
+        </div>
+      ) : null}
+
+      {selected && journeyAvailable ? (
+        <div className="route-card__journey">
+          {journeying ? (
+            <button type="button" className="button button--secondary" onClick={onStopJourney}>
+              Stop navigating
+            </button>
+          ) : (
+            <button type="button" className="button" onClick={onStartJourney}>
+              Start
+            </button>
+          )}
+          {journeyNotice ? <p className="field-note">{journeyNotice}</p> : null}
+        </div>
+      ) : null}
+      {selected && !journeyAvailable ? (
+        <div className="route-card__journey">
+          <p className="field-note">
+            Start is only available when this trip begins at your current location —
+            plan from &ldquo;Use my current location&rdquo; to turn-by-turn this route.
+          </p>
         </div>
       ) : null}
     </article>

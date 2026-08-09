@@ -106,6 +106,58 @@ export function LocateIcon(props) {
   );
 }
 
+/** Plan a route — a path between two points. */
+export function RouteIcon(props) {
+  return (
+    <Svg {...props}>
+      <circle cx="5" cy="18" r="2" />
+      <circle cx="19" cy="6" r="2" />
+      <path d="M7 18c4 0 3-6 7-6s3-6 7-6" />
+    </Svg>
+  );
+}
+
+/** Crowd predictor (future) — a forecast trend line. */
+export function TrendIcon(props) {
+  return (
+    <Svg {...props}>
+      <path d="M4 17l5-5 4 4 7-8" />
+      <path d="M15 8h5v5" />
+    </Svg>
+  );
+}
+
+/** Helpline — a phone. */
+export function PhoneIcon(props) {
+  return (
+    <Svg {...props}>
+      <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2C10.5 21 3 13.5 3 6a2 2 0 0 1 2-2Z" />
+    </Svg>
+  );
+}
+
+/** Chat helper (future) — a speech bubble. */
+export function ChatIcon(props) {
+  return (
+    <Svg {...props}>
+      <path d="M4 5h16v10H8l-4 4V5Z" />
+      <path d="M8 9h8" />
+      <path d="M8 12h5" />
+    </Svg>
+  );
+}
+
+/** FAQ — a question mark. */
+export function HelpIcon(props) {
+  return (
+    <Svg {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.5-2 1.8-2 3.5" />
+      <path d="M12 17h.01" />
+    </Svg>
+  );
+}
+
 /** Threshold — sliders. */
 export function SlidersIcon(props) {
   return (

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Layer, Map, Marker, Source } from '@vis.gl/react-maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { routeBadge, worstIsFlagged } from '../badges';
@@ -19,12 +19,15 @@ export function MapView({
   onSelect,
   from,
   to,
-  refuges,
   liveLocation,
   liveLocationTracking,
   onToggleLiveLocation,
+  journeyActive,
+  refuges,
+  onPlanRouteToRefuge,
 }) {
   const mapRef = useRef(null);
+  const [selectedRefuge, setSelectedRefuge] = useState(null);
 
   const routesGeoJson = useMemo(
     () => ({
@@ -76,6 +79,42 @@ export function MapView({
       { padding: 56, duration: 0 },
     );
   }, [routes]);
+
+  // Fit the view to the refuge markers (+ the origin point) without
+  // animation. Without this the map just sits at its fixed default centre,
+  // which only happens to include the markers if the user is already near
+  // the middle of the CBD — everywhere else they'd render off-screen.
+  useEffect(() => {
+    const map = mapRef.current?.getMap?.();
+    if (!map || !refuges || refuges.length === 0) return;
+    const points = [...refuges.map((r) => [r.lon, r.lat])];
+    if (from) points.push([from.lon, from.lat]);
+    let minLon = Infinity,
+      minLat = Infinity,
+      maxLon = -Infinity,
+      maxLat = -Infinity;
+    for (const [lon, lat] of points) {
+      if (lon < minLon) minLon = lon;
+      if (lat < minLat) minLat = lat;
+      if (lon > maxLon) maxLon = lon;
+      if (lat > maxLat) maxLat = lat;
+    }
+    map.fitBounds(
+      [
+        [minLon, minLat],
+        [maxLon, maxLat],
+      ],
+      { padding: 64, duration: 0, maxZoom: 17 },
+    );
+  }, [refuges, from]);
+
+  // Journey mode: keep the device's live position centred as it updates.
+  // jumpTo, not flyTo/easeTo — an instant snap, not a sliding animation.
+  useEffect(() => {
+    const map = mapRef.current?.getMap?.();
+    if (!map || !journeyActive || !liveLocation) return;
+    map.jumpTo({ center: [liveLocation.lon, liveLocation.lat] });
+  }, [journeyActive, liveLocation]);
 
   return (
     <div className="map-shell">
@@ -164,6 +203,53 @@ export function MapView({
           </Marker>
         ) : null}
 
+        {(refuges || []).map((r) => (
+          <Marker key={r.name} longitude={r.lon} latitude={r.lat} anchor="bottom">
+            <button
+              type="button"
+              className="map-pin-btn"
+              onClick={() => setSelectedRefuge(r)}
+              aria-label={`${r.name}, ${r.kind}`}
+            >
+              <span className="map-pin">
+                <span className="map-pin__dot map-pin__dot--refuge" />
+                <span className="map-pin__label">{r.name}</span>
+              </span>
+            </button>
+          </Marker>
+        ))}
+
+        {selectedRefuge ? (
+          <Marker longitude={selectedRefuge.lon} latitude={selectedRefuge.lat} anchor="top">
+            <div className="refuge-callout">
+              <strong>{selectedRefuge.name}</strong>
+              <span>{selectedRefuge.kind}</span>
+              <div className="refuge-callout__actions">
+                <button
+                  type="button"
+                  className="link-button"
+                  onClick={() =>
+                    onPlanRouteToRefuge?.({
+                      label: selectedRefuge.name,
+                      lat: selectedRefuge.lat,
+                      lon: selectedRefuge.lon,
+                    })
+                  }
+                >
+                  Take me there
+                </button>
+                <button
+                  type="button"
+                  className="link-button"
+                  onClick={() => setSelectedRefuge(null)}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </Marker>
+        ) : null}
+
         {selected?.worst && worstIsFlagged(selected, threshold) ? (
           <Marker
             longitude={selected.worst.lon}
@@ -176,15 +262,6 @@ export function MapView({
             </div>
           </Marker>
         ) : null}
-
-        {(refuges || []).map((r) => (
-          <Marker key={r.name} longitude={r.lon} latitude={r.lat} anchor="bottom">
-            <div className="map-pin">
-              <span className="map-pin__dot map-pin__dot--refuge" />
-              <span className="map-pin__label">{r.name}</span>
-            </div>
-          </Marker>
-        ))}
       </Map>
     </div>
   );
