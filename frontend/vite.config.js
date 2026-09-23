@@ -9,4 +9,8 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['maplibre-gl'],
   },
+  test: {
+    environment: 'jsdom',
+    setupFiles: './src/test/setup.js',
+  },
 });

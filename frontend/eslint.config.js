@@ -18,4 +18,10 @@ export default [
       'no-unused-vars': ['warn', { varsIgnorePattern: '^[A-Z_]' }],
     },
   },
+  {
+    files: ['src/**/*.{test,spec}.{js,jsx}'],
+    languageOptions: {
+      globals: globals.vitest,
+    },
+  },
 ];
